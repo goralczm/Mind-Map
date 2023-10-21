@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 
 /// <summary>
@@ -18,6 +19,14 @@ public static class Helpers
             return null;
 
         return hit.transform.GetComponent<Node>();
+    }
+
+    public static bool IsMouseOverUI()
+    {
+        if (Input.touchCount > 0)
+            return EventSystem.current.IsPointerOverGameObject(0);
+
+        return EventSystem.current.IsPointerOverGameObject();
     }
 
     public static void RestartLevel()

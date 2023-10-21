@@ -12,10 +12,12 @@ public class Node : MonoBehaviour, IDestroyeable, ISelectable
     [SerializeField] private SpriteRenderer _rend;
 
     private NodeEditor _editor;
+    private Vector3 _startScale;
 
     private void Awake()
     {
         _editor = NodeEditor.Instance;
+        _startScale = transform.localScale;
     }
 
     public void SetColor(float red, float green, float blue)
@@ -49,12 +51,13 @@ public class Node : MonoBehaviour, IDestroyeable, ISelectable
 
     public void Select()
     {
-        _rend.color = Color.grey;
+        transform.localScale = _startScale * 1.1f;
     }
 
     public void Deselect()
     {
-        _rend.color = Color.white;
+        transform.localScale = _startScale;
+
     }
 
     public void DestroyObject()

@@ -1,9 +1,9 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SelectionManager : MonoBehaviour
+public class SelectionManager : Singleton<SelectionManager>
 {
+    [Header("Selections")]
     public List<Transform> selections = new List<Transform>();
 
     [Header("Settings")]
@@ -12,14 +12,29 @@ public class SelectionManager : MonoBehaviour
     [Header("Instances")]
     [SerializeField] private Transform _selection;
 
+    private NodeEditor _nodeEditor;
     private Vector2 _startSelectionPos;
     private Vector2 _endSelectionPos;
     private Vector2 _lastMousePos;
     private bool _isDragging;
     private bool _isSelecting;
 
+    private void OnDisable()
+    {
+        _isDragging = false;
+        _isSelecting = false;
+    }
+
+    private void Start()
+    {
+        _nodeEditor = NodeEditor.Instance;
+    }
+
     private void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Delete))
+            DeleteSelected();
+
         if (!Input.GetKey(KeyCode.LeftShift))
         {
             if (Input.GetMouseButtonDown(0))
@@ -45,8 +60,8 @@ public class SelectionManager : MonoBehaviour
         if (Input.GetMouseButtonUp(0))
             _isDragging = false;
 
-        if (Input.GetMouseButtonDown(1))
-            ResetSelections();
+        if (selections.Count > 1)
+            _nodeEditor.Hide();
 
         if (_isDragging)
             HandleMovement();
@@ -98,7 +113,7 @@ public class SelectionManager : MonoBehaviour
         _lastMousePos = InputManager.MouseWorldPos;
     }
 
-    private void ResetSelections()
+    public void ResetSelections()
     {
         foreach (Transform selection in selections)
         {
@@ -108,7 +123,7 @@ public class SelectionManager : MonoBehaviour
         _isDragging = false;
     }
 
-    private void AddSelection(Transform selection)
+    public void AddSelection(Transform selection)
     {
         ISelectable newSelection = selection.GetComponent<ISelectable>();
         selections.Add(selection);
@@ -136,5 +151,12 @@ public class SelectionManager : MonoBehaviour
     private Vector2 Vector2Abs(Vector2 v)
     {
         return new Vector2(Mathf.Abs(v.x), Mathf.Abs(v.y));
+    }
+
+    private void DeleteSelected()
+    {
+        for (int i = selections.Count - 1; i >= 0; i--)
+            selections[i].GetComponent<Node>().DestroyObject();
+        selections.Clear();
     }
 }

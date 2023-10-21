@@ -11,7 +11,13 @@ public class NodeEditor : Singleton<NodeEditor>
     [SerializeField] private Slider _green;
     [SerializeField] private Slider _blue;
 
+    private SelectionManager _selectionManager;
     private Node _currentlyEditingNode;
+
+    private void Start()
+    {
+        _selectionManager = SelectionManager.Instance;
+    }
 
     private void Update()
     {
@@ -38,11 +44,19 @@ public class NodeEditor : Singleton<NodeEditor>
         }
 
         _currentlyEditingNode = node;
+        _selectionManager.ResetSelections();
+        _selectionManager.AddSelection(_currentlyEditingNode.transform);
         _editorText.SetTextWithoutNotify(_currentlyEditingNode.GetText());
         Color nodeColor = _currentlyEditingNode.GetColor();
         _red.value = nodeColor.r;
         _green.value = nodeColor.g;
         _blue.value = nodeColor.b;
         _editorWindow.Show();
+    }
+
+    public void Hide()
+    {
+        _currentlyEditingNode = null;
+        _editorWindow.Hide();
     }
 }
