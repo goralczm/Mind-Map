@@ -1,11 +1,13 @@
+using System.Collections.Generic;
 using UnityEngine;
 
-public class PlacementLogic : MonoBehaviour
+public class PlacementLogic : Singleton<PlacementLogic>
 {
+    public List<Node> nodes = new List<Node>();
+    public int nextId;
+
     [Header("Instances")]
     [SerializeField] private Node _nodePrefab;
-
-    private int _nodesCount;
 
     private void Update()
     {
@@ -18,13 +20,17 @@ public class PlacementLogic : MonoBehaviour
 
     private void LeftClickAction()
     {
-        CreateNode();
+        Node newNode = CreateNode();
+        newNode.id = nextId;
+        nextId++;
     }
 
-    public void CreateNode()
+    public Node CreateNode()
     {
         Node newNode = Instantiate(_nodePrefab, InputManager.MouseWorldPos, Quaternion.identity);
-        newNode.name = $"Node{_nodesCount}";
-        _nodesCount++;
+        newNode.name = $"New Node";
+        nodes.Add(newNode);
+
+        return newNode;
     }
 }

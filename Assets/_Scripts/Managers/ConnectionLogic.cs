@@ -1,7 +1,11 @@
+using System.Collections.Generic;
 using UnityEngine;
 
-public class ConnectionLogic : MonoBehaviour
+public class ConnectionLogic : Singleton<ConnectionLogic>
 {
+    [Header("Connections")]
+    public List<Connection> connections = new List<Connection>();
+
     [Header("Settings")]
     [SerializeField] private LayerMask _nodesLayer;
 
@@ -32,15 +36,16 @@ public class ConnectionLogic : MonoBehaviour
             FinishConnection(nodeUnderMouse);
     }
 
-    private void StartConnection(Node firstNode)
+    public void StartConnection(Node firstNode)
     {
         _currentConnection = Instantiate(_connectionPrefab, new Vector2(100, 100), Quaternion.identity);
         _currentConnection.AddConnection(0, firstNode);
     }
 
-    private void FinishConnection(Node secondNode)
+    public void FinishConnection(Node secondNode)
     {
         _currentConnection.AddConnection(1, secondNode);
+        connections.Add(_currentConnection);
         _currentConnection = null;
     }
 

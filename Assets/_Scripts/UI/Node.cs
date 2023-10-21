@@ -4,6 +4,8 @@ using System.Collections.Generic;
 
 public class Node : MonoBehaviour, IDestroyeable, ISelectable
 {
+    [HideInInspector] public int id;
+
     [Header("Connections")]
     public List<Connection> connections = new List<Connection>();
 
@@ -65,6 +67,7 @@ public class Node : MonoBehaviour, IDestroyeable, ISelectable
         for (int i = connections.Count - 1; i >= 0; i--)
             connections[i].DestroyObject();
 
+        PlacementLogic.Instance.nodes.Remove(this);
         Destroy(gameObject);
     }
 }
